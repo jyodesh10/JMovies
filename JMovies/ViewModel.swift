@@ -18,6 +18,8 @@ class ViewModel {
     }
     private(set) var homeStatus: FetchingState = .notStarted
     private(set) var videoStatus: FetchingState = .notStarted
+    private(set) var upcomingStatus: FetchingState = .notStarted
+
     
     var videoId: String = ""
 
@@ -26,6 +28,7 @@ class ViewModel {
     var trendingTVs: [Title] = []
     var topRatedMovies: [Title] = []
     var topRatedTVs: [Title] = []
+    var upcomingMovies: [Title] = []
     var heroTitle: Title = Title.previewTitles[0]
     
     func getTitles() async {
@@ -39,11 +42,13 @@ class ViewModel {
                 async let tTVs = dataFetcher.fetchTitles(for: "tv", by: "trending")
                 async let tRMovies = dataFetcher.fetchTitles(for: "movie", by: "top_rated")
                 async let tRTVs = dataFetcher.fetchTitles(for: "tv", by: "top_rated")
+
                 
                 trendingMovies = try await tMovies
                 trendingTVs = try await tTVs
                 topRatedMovies = try await tRMovies
                 topRatedTVs = try await tRTVs
+
                 
                 if let title = trendingMovies.randomElement() {
                     heroTitle = title
@@ -58,6 +63,19 @@ class ViewModel {
             homeStatus = .success
         }
         
+    }
+    
+    func getUpcoming() async {
+        upcomingStatus = .fetching
+        do {
+            async let upMovies = dataFetcher.fetchTitles(for: "movie", by: "upcoming")
+            
+            upcomingMovies = try await upMovies
+            
+            upcomingStatus = .success
+        } catch {
+            upcomingStatus = .failed(underlyingError: error)
+        }
     }
     
     func getVideoId (for title: String) async {

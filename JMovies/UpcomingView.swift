@@ -8,8 +8,28 @@
 import SwiftUI
 
 struct UpcomingView: View {
+    var viewModel = ViewModel()
+
+
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        NavigationStack {
+            GeometryReader { geo in
+                switch viewModel.upcomingStatus {
+                case .fetching:
+                    ProgressView()
+                        .frame(width: geo.size.width, height: geo.size.height)
+                case .notStarted:
+                    EmptyView()
+                case .success:
+                    VerticalListView(titles: viewModel.upcomingMovies)
+                case .failed(underlyingError: let error):
+                    Text(error.localizedDescription)
+                }
+            }
+            .task {
+                await viewModel.getUpcoming()
+            }
+        }
     }
 }
 
