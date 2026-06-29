@@ -1,0 +1,43 @@
+# Xcode
+#
+# Reference: https://github.com/github/gitignore/blob/main/Swift.gitignore
+
+# Build artifacts
+build/
+DerivedData/
+
+# Architecture-specific build folders
+.build/
+
+# User-specific Xcode settings (Crucial to prevent conflicts)
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata/
+
+# Xcode Server Workspace
+xcsconfig
+
+# Xcode3 adapter ProfileTraces
+*.prof_trace
+
+# Open Terminal here files
+.LSOverride
+
+# Mac OS X hidden files
+.DS_Store
+Icon?
+._*
+
+# Swift Package Manager
+.swiftpm/xcode/xcuserdata/
+.swiftpm/xcode/xcshareddata/
+
+# --- YOUR CUSTOM SECRET FILES ---
+APIConfig.json
+.env
