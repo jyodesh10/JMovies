@@ -6,17 +6,19 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct VerticalListView: View {
     var titles : [Title]
+    var canDelete : Bool
+    @Environment(\.modelContext) var modelContext
+    @State private var navigationPath = NavigationPath()
 
     var body: some View {
-        GeometryReader {
-            geometry in
-            List(titles) { title in
-                NavigationLink{
-                    TitleDetailView(title: title)
-                } label: {
+        NavigationStack(path: $navigationPath) {
+            GeometryReader {
+                geometry in
+                List(titles) { title in
                     AsyncImage(url: URL(string: title.posterPath ?? "")!){image in
                         HStack {
                             image
@@ -31,13 +33,31 @@ struct VerticalListView: View {
                             .frame(width: geometry.size.width)
                     }
                     .frame(height: 150)
+                    .onTapGesture {
+                        navigationPath.append(title)
+                    }
+                    .swipeActions(edge: .trailing) {
+                        Button{
+                            if(canDelete) {
+                                modelContext.delete(title)
+                                try? modelContext.save()
+                            }
+                        } label: {
+                            Image(systemName: "trash")
+                                .tint(.red)
+                        }
+                    }
+                    
                 }
-                
             }
+        }
+        .navigationDestination(for: Title.self) {
+            title in
+            TitleDetailView(title: title)
         }
     }
 }
 
 #Preview {
-    VerticalListView(titles: Title.previewTitles )
+    VerticalListView(titles: Title.previewTitles, canDelete: false)
 }

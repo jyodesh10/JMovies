@@ -10,9 +10,8 @@ import SwiftUI
 struct UpcomingView: View {
     var viewModel = ViewModel()
 
-
     var body: some View {
-        NavigationStack {
+        NavigationStack{
             GeometryReader { geo in
                 switch viewModel.upcomingStatus {
                 case .fetching:
@@ -21,9 +20,11 @@ struct UpcomingView: View {
                 case .notStarted:
                     EmptyView()
                 case .success:
-                    VerticalListView(titles: viewModel.upcomingMovies)
+                    VerticalListView(titles: viewModel.upcomingMovies, canDelete: false)
                 case .failed(underlyingError: let error):
                     Text(error.localizedDescription)
+                        .errorMessage()
+                        .frame(width : geo.size.width, height: geo.size.height)
                 }
             }
             .task {

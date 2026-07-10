@@ -14,8 +14,8 @@ struct DataFetcher{
     let youtubeSearchUrl = APIConfig.shared?.youtubeSearchUrl
     let youtubeApiKey = APIConfig.shared?.youtubeApiKey
     
-    func fetchTitles(for media: String, by type:String) async throws -> [Title] {
-        let fetchTitlesUrl = try buildURL(media: media, type: type)
+    func fetchTitles(for media: String, by type:String, searchTerm:String?=nil) async throws -> [Title] {
+        let fetchTitlesUrl = try buildURL(media: media, type: type, searchQuery: searchTerm)
         
         guard let fetchTitlesUrl = fetchTitlesUrl else {
             throw NetworkError.urlBuildFailed
@@ -71,7 +71,7 @@ struct DataFetcher{
         return try decoder.decode(type, from: data)
     }
     
-    private func buildURL (media:String, type:String) throws -> URL? {
+    private func buildURL (media:String, type:String, searchQuery:String? = nil) throws -> URL? {
         guard let baseUrl = baseUrl else {
             throw NetworkError.missingConfig
         }
@@ -85,15 +85,25 @@ struct DataFetcher{
             path = "3/\(type)/\(media)/day"
         } else if type == "top_rated" || type == "upcoming"{
             path = "3/\(media)/\(type)"
+        } else if type == "search"{
+            path = "3/\(type)/\(media)"
         } else {
             throw NetworkError.urlBuildFailed
         }
         
+        var urlQueryItems = [
+            URLQueryItem(name: "api_key", value: apiKey)
+        ]
+        
+        if let searchQuery {
+            urlQueryItems.append(
+                URLQueryItem(name: "query", value: searchQuery)
+            )
+        }
+                
         guard let url = URL(string: baseUrl)?
             .appending(path: path)
-            .appending(queryItems: [
-                URLQueryItem(name: "api_key", value: apiKey)
-            ]) else {
+            .appending(queryItems: urlQueryItems) else {
             throw NetworkError.urlBuildFailed
         }
         

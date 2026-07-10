@@ -6,13 +6,15 @@
 //
 
 import SwiftUI
-
+import SwiftData
 struct TitleDetailView: View {
+    @Environment(\.dismiss) var dismiss
     let title: Title
     var titlename: String {
         return (title.name ?? title.title) ?? ""}
     let viewModel = ViewModel()
-    
+    @Environment(\.modelContext) var modelContext
+
     var body: some View {
         GeometryReader { geometry in
             switch viewModel.videoStatus {
@@ -37,10 +39,28 @@ struct TitleDetailView: View {
                         
                         Text(title.overview ?? "")
                             .padding(5)
+                        HStack{
+                            Spacer()
+                            Button{
+                                let savetitle = title
+                                savetitle.title = titlename
+                                
+                                modelContext.insert(savetitle)
+                                try? modelContext.save()
+                                dismiss()
+                            } label: {
+                                Text(Constants.downloadString)
+                                    .ghostButton()
+                            }
+                            Spacer()
+                        }
+                        
                     }
                 }
             case .failed(let underlyingError):
                 Text(underlyingError.localizedDescription)
+                    .errorMessage()
+                    .frame(width : geometry.size.width, height: geometry.size.height)
             }
         }
         .task {

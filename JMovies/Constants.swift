@@ -19,12 +19,18 @@ import SwiftUI
         static let topRatedMoviesString = "Top-Rated Movies"
         static let trendingTVsString = "Trending TVs"
         static let topRatedTVsString = "Top-Rated TVs"
+        static let searchByMoviesString = "Search by Movies"
+        static let searchByTVsString = "Search by TVs"
+        static let moviePlaceholderString = "Search for a movie"
+        static let TVPlaceholderString = "Search for a TV"
         
         
         static let homeIconString = "house"
         static let upcomingIconString = "play.circle"
         static let searchIconString = "magnifyingglass"
         static let downloadIconString = "arrow.down.to.line"
+        static let TVIconString = "tv"
+        static let MovieIconString = "movieclapper"
         
         
         static let testTitleUrl = "https://mediaproxy.tvtropes.org/width/1200/https://static.tvtropes.org/pmwiki/pub/images/6fa79a3251cbf9c1c929aaec71ebb1309c57566a61d490045de285525914f285_ur12002c1600_ri__waifu2x_art_noise1.png"
@@ -60,4 +66,13 @@ extension Text {
                     .stroke(.buttonBorder, lineWidth: 2.5)
             }
     }
+    
+    func errorMessage() -> some View {
+        self
+            .foregroundColor(.red)
+            .padding()
+            .background(.ultraThinMaterial)
+            .clipShape(.rect(cornerRadius: 10))
+    }
 }
+
